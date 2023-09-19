@@ -1,4 +1,4 @@
-﻿using Banco;
+﻿using Banco.classes;
 
 class Program
 {

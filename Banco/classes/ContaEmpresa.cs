@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Banco
+namespace Banco.classes
 {
 
     using System;
@@ -14,23 +14,30 @@ namespace Banco
         public int NumeroConta { get; set; }
         public int Agencia { get; set; }
         public string TitularConta { get; set; }
-        public decimal Saldo { get; set; }
+        public double Saldo { get; set; }
 
-        public ContaBancaria(int numeroConta, int agencia, string titularConta)
+        public ContaBancaria(int numeroConta, int agencia, string titularConta, double saldo)
         {
             NumeroConta = numeroConta;
             Agencia = agencia;
             TitularConta = titularConta;
-            Saldo = 0;
+            Saldo = saldo;
         }
 
-        public virtual void Depositar(decimal valor)
+        public void Depositar(double valor)
         {
-            Saldo += valor;
-            Console.WriteLine($"Depósito de R$ {valor} realizado com sucesso. Novo saldo: R$ {Saldo}");
+            if (valor >= 0)
+            {
+                Saldo += valor;
+            }
+            else
+            {
+                Console.WriteLine("saldo insuficiente");
+            }
+           
         }
 
-        public virtual void Sacar(decimal valor)
+        public virtual void Sacar(double valor)
         {
             if (Saldo >= valor)
             {
@@ -46,12 +53,14 @@ namespace Banco
 
     public class ContaEmpresa : ContaBancaria
     {
-        public decimal TaxaAnuidade { get; set; }
-        public decimal LimiteEmprestimo { get; set; }
-        public decimal TotalEmprestimo { get; set; }
+        public double TaxaAnuidade { get; set; }
+        public double LimiteEmprestimo { get; set; }
+        public double TotalEmprestimo { get; set; }
 
-        public ContaEmpresa(int numeroConta, int agencia, string titularConta, decimal taxaAnuidade, decimal limiteEmprestimo)
-            : base(numeroConta, agencia, titularConta)
+        public ContaEmpresa(int numeroConta, int agencia, string titularConta, double taxaAnuidade, double limiteEmprestimo, double totalEmprestimo,
+                 double saldo ): 
+            base(numeroConta,agencia,titularConta,saldo)
+            
         {
             TaxaAnuidade = taxaAnuidade;
             LimiteEmprestimo = limiteEmprestimo;
@@ -79,7 +88,7 @@ namespace Banco
             }
         }
 
-        public override void Sacar(decimal valor)
+        public override void Sacar(double valor)
         {
             try
             {
@@ -92,7 +101,7 @@ namespace Banco
                     decimal taxaSaque = 5;
                     if (Saldo >= valor + taxaSaque)
                     {
-                        Saldo -= (valor + taxaSaque);
+                        Saldo -= valor + taxaSaque;
                         Console.WriteLine($"Saque de R$ {valor} realizado com sucesso. Taxa de saque de R$ {taxaSaque} aplicada. Novo saldo: R$ {Saldo}");
                     }
                     else
@@ -108,47 +117,6 @@ namespace Banco
         }
     }
 
-    public class ContaEstudantee : ContaBancaria
-    {
-        public decimal LimiteChequeEspecial { get; set; }
-        public string CPF { get; set; }
-
-        public int numeroConta { get; set; }
-        public int agencia { get; set; }
-        string titularConta { get; set; }
-
-        public string InstituicaoEnsino { get; set; }
-
-        public ContaEstudantee(int numeroConta, int agencia, string titularConta, decimal limiteChequeEspecial, string cpf, string instituicaoEnsino)
-            : base(numeroConta, agencia, titularConta)
-        {
-            titularConta = titularConta;
-            agencia = agencia;
-            titularConta = titularConta;
-            LimiteChequeEspecial = limiteChequeEspecial;
-            CPF = cpf;
-            InstituicaoEnsino = instituicaoEnsino;
-        }
-
-        public void Sacar(decimal valor)
-        {
-            try
-            {
-                if (Saldo + LimiteChequeEspecial >= valor)
-                {
-                    Saldo -= valor;
-                    Console.WriteLine($"Saque de R$ {valor} realizado com sucesso. Novo saldo: R$ {Saldo}");
-                }
-                else
-                {
-                    throw new Exception("Limite de cheque especial excedido. Saldo insuficiente para saque.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-            }
-        }
-    }
+   
 
   
